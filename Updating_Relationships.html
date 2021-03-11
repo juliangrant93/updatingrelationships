@@ -1,0 +1,58 @@
+Updating Relationships
+relationships can be modified along with resources, JSON:API also supports updating of relationships independently at URLs from relationship links.
+
+
+Updating To-One Relationships
+A server MUST respond to PATCH requests to a URL from a to-one relationship link as described below.
+
+The PATCH request MUST include a top-level member named data 
+a resource identifier object corresponding to the new related resource OR NULL
+
+PATCH /articles/1/relationships/author HTTP/1.1
+Content-Type: application/vnd.api+json
+Accept: application/vnd.api+json
+
+{
+  "data": { "type": "people", "id": "12" }
+}
+
+{
+  "data": null
+}
+
+Updating To-Many Relationships
+A server MUST respond to PATCH, POST, and DELETE requests to a URL from a to-many relationship link as described below.
+For all request types, the body MUST contain a data member whose value is an empty array or an array of resource identifier objects.
+PATCH /articles/1/relationships/tags HTTP/1.1
+Content-Type: application/vnd.api+json
+Accept: application/vnd.api+json
+
+{
+  "data": [
+    { "type": "tags", "id": "2" },
+    { "type": "tags", "id": "3" }
+  ]
+}
+
+PATCH /articles/1/relationships/tags HTTP/1.1
+Content-Type: application/vnd.api+json
+Accept: application/vnd.api+json
+
+{
+  "data": []
+}
+
+Responses
+202 Accepted- update request has been accepted for processing, but the processing has not been completed by the time the server responds
+
+204 No Content- A server MUST return a 204 No Content status code if an update is successful and the representation of the resource in the request matches the result.
+
+200 OK- If a server accepts an update but also changes the targeted relationship(s) in other ways than those specified by the request, it MUST return a 200 OK response. The response document MUST include a representation of the updated relationship
+
+403 Forbidden- A server MUST return 403 Forbidden in response to an unsupported request to update a relationship.
+
+Other Responses
+
+ HTTP status codes
+ error details with error responses
+prepared responses in accordance with HTTP semantics.
